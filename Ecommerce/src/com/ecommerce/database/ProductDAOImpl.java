@@ -19,7 +19,7 @@ public class ProductDAOImpl implements ProductDAOInterface {
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 Product product = new Product();
-                product.setProductId(rs.getInt("product_id"));
+                product.setProductId(rs.getInt("prod_id"));
                 product.setName(rs.getString("name"));
                 product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getDouble("price"));
