@@ -32,8 +32,8 @@ public class UserDAOImpl implements UserDAOInterface{
         }
         finally {
         	try {
-				conn.close();
-				stmt.close();
+        		if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

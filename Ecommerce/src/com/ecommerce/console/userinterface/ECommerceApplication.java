@@ -1,6 +1,5 @@
 package com.ecommerce.console.userinterface;
 
-import java.util.List;
 import java.util.Scanner;
 
 
@@ -16,7 +15,6 @@ public class ECommerceApplication {
         
         System.out.println("1. Register User");
         System.out.println("2. Login");
-        System.out.println("3. View Products");
         
         Scanner sc = new Scanner(System.in);
         int choice = sc.nextInt();
@@ -41,6 +39,18 @@ public class ECommerceApplication {
             user.setRole("user");
 
             userDAO.registerUser(user);
+            System.out.println("Would you like to log in now? (yes/no)");
+            String autoLogin = sc.nextLine();
+            if ("yes".equalsIgnoreCase(autoLogin)) {
+                if (userDAO.loginUser(user.getUsername(), user.getPassword())) {
+                    System.out.println("Login successful! Welcome, " + user.getFirstName() + "!");
+                    // Navigate to user operations here
+                } else {
+                    System.out.println("Something went wrong. Please try to login manually.");
+                }
+            } else {
+                System.out.println("You can log in later from the main menu.");
+            }
         }else if (choice == 2) {
             System.out.println("Enter Username: ");
             String username = sc.nextLine();
