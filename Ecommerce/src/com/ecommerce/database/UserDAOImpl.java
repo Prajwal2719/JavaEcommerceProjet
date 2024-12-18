@@ -2,6 +2,7 @@ package com.ecommerce.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.ecommerce.interfaces.UserDAOInterface;
@@ -54,4 +55,22 @@ public class UserDAOImpl implements UserDAOInterface{
 	        return false;
 	    }
 	}
+
+	public int getUserIdByUsername(String username) {
+        int userId = -1;
+        try (Connection conn = DataBaseConnection.connect()) {
+            String query = "SELECT user_id FROM UsersDetails WHERE username = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                userId = rs.getInt("user_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userId;
+    }
+
 }
