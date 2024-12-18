@@ -1,20 +1,25 @@
 package com.ecommerce.console.userinterface;
 
+import java.util.List;
 import java.util.Scanner;
 
-
+import com.ecommerce.database.ProductDAOImpl;
 import com.ecommerce.database.UserDAOImpl;
-
+import com.ecommerce.model.Product;
 import com.ecommerce.model.User;
 
 public class ECommerceApplication {
 
 	public static void main(String[] args) {
 		UserDAOImpl userDAO= new UserDAOImpl();
+		ProductDAOImpl productDAO = new ProductDAOImpl();
+		
         System.out.println("Welcome to E-Commerce Application");
         
         System.out.println("1. Register User");
         System.out.println("2. Login");
+        System.out.println("3. View Products");
+        System.out.println("Enter your choice:");
         
         Scanner sc = new Scanner(System.in);
         int choice = sc.nextInt();
@@ -51,6 +56,7 @@ public class ECommerceApplication {
             } else {
                 System.out.println("You can log in later from the main menu.");
             }
+            
         }else if (choice == 2) {
             System.out.println("Enter Username: ");
             String username = sc.nextLine();
@@ -63,6 +69,17 @@ public class ECommerceApplication {
             } else {
                 System.out.println("Invalid credentials. Please try again.");
             }
+            
+        }else if (choice == 3) { // View Products
+        	System.out.println("Available Products:");
+            List<Product> products = productDAO.getAllProducts();
+            if (products.isEmpty()) {
+                System.out.println("No products available at the moment.");
+            } else {
+                for (Product product : products) {
+                    System.out.println(product);
+                }
+            } 
         }
     }
 }
