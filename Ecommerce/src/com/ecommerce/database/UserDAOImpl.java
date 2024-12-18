@@ -14,7 +14,7 @@ public class UserDAOImpl implements UserDAOInterface{
 	public void registerUser(User user) {
         try {
         	conn = DataBaseConnection.connect();
-            String query = "INSERT INTO UserDetails (username, password, first_name, last_name, email, mobile, city, role) " +
+            String query = "INSERT INTO UsersDetails (username, password, first_name, last_name, email, mobile, city, role) " +
                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             stmt = conn.prepareStatement(query);
             stmt.setString(1, user.getUsername());
@@ -42,8 +42,16 @@ public class UserDAOImpl implements UserDAOInterface{
 
 	@Override
 	public boolean loginUser(String username, String password) {
-        // Implementation for login (to be done later)
-		return false;
-	}
+		try (Connection conn = DataBaseConnection.connect()) {
+	        String query = "SELECT * FROM UsersDetails WHERE username = ? AND password = ?";
+	        PreparedStatement stmt = conn.prepareStatement(query);
+	        stmt.setString(1, username);
+	        stmt.setString(2, password);
 
+	        return stmt.executeQuery().next(); // If a row exists, credentials are valid
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
 }
