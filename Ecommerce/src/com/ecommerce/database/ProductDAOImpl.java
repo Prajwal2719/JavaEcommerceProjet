@@ -37,4 +37,21 @@ public class ProductDAOImpl implements ProductDAOInterface {
 	public void addProduct(Product product) {
 		
 	}
+
+	public boolean addProduct(String name, String description, double price, int quantity) {
+	    try (Connection conn = DataBaseConnection.connect()) {
+	        String query = "INSERT INTO Products (name, description, price, quantity) VALUES (?, ?, ?, ?)";
+	        PreparedStatement stmt = conn.prepareStatement(query);
+	        stmt.setString(1, name);
+	        stmt.setString(2, description);
+	        stmt.setDouble(3, price);
+	        stmt.setInt(4, quantity);
+
+	        int rowsInserted = stmt.executeUpdate();
+	        return rowsInserted > 0;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
 }

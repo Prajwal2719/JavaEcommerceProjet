@@ -83,26 +83,39 @@ public class CartDAOImpl implements CartDAOInterface {
     }
 
 
-    @Override
-    public List<Cart> getCartItems(int userId) {
-        List<Cart> cartItems = new ArrayList<>();
-        try (Connection conn = DataBaseConnection.connect()) {
-            String query = "SELECT * FROM Cart WHERE user_id = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
+ 
 
-            while (rs.next()) {
-                Cart cart = new Cart();
-                cart.setCartId(rs.getInt("cart_id"));
-                cart.setUserId(rs.getInt("user_id"));
-                cart.setProductId(rs.getInt("prod_id"));
-                cart.setQuantity(rs.getInt("quantity"));
-                cartItems.add(cart);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+	
+
+
+	public double calculateUserBill(int userId) {
+    double totalBill = 0.0;
+    try (Connection conn = DataBaseConnection.connect()) {
+        String query = "SELECT c.prod_id, c.quantity, p.price FROM Cart c INNER JOIN Products p ON c.prod_id = p.prod_id WHERE c.user_id = ?";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setInt(1, userId);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            int quantity = rs.getInt("quantity");
+            double price = rs.getDouble("price");
+            totalBill += (quantity * price);
         }
-        return cartItems;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return -1; // Indicates failure
     }
+    return totalBill;
+}
+
+
+
+
+
+
+
+	@Override
+	public List<Cart> getCartItems(int userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
