@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.ecommerce.interfaces.CartDAOInterface;
 import com.ecommerce.model.Cart;
+import com.ecommerce.model.Product;
 
 public class CartDAOImpl implements CartDAOInterface {
 
@@ -105,4 +106,52 @@ public class CartDAOImpl implements CartDAOInterface {
         }
         return cartItems;
     }
+
+
+	public List<Cart> getPurchaseHistory(int userId) {
+    List<Cart> purchaseHistory = new ArrayList<>();
+    try (Connection conn = DataBaseConnection.connect()) {
+        String query = "SELECT prod_id, quantity FROM PurchaseHistory WHERE user_id = ?";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setInt(1, userId);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            Cart cart = new Cart();
+            cart.setProductId(rs.getInt("prod_id"));
+            cart.setQuantity(rs.getInt("quantity"));
+            purchaseHistory.add(cart);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return purchaseHistory;
+}
+
+
+	public double calculateUserBill(int userId) {
+    double totalBill = 0.0;
+    try (Connection conn = DataBaseConnection.connect()) {
+        String query = "SELECT c.prod_id, c.quantity, p.price FROM Cart c INNER JOIN Products p ON c.prod_id = p.prod_id WHERE c.user_id = ?";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setInt(1, userId);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            int quantity = rs.getInt("quantity");
+            double price = rs.getDouble("price");
+            totalBill += (quantity * price);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return -1; // Indicates failure
+    }
+    return totalBill;
+}
+
+
+	public Product getProductDetails(int productId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 }

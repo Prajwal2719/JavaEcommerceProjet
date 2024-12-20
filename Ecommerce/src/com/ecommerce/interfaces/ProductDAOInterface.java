@@ -7,5 +7,5 @@ import com.ecommerce.model.Product;
 public interface ProductDAOInterface {
 
     List<Product> getAllProducts();
-    void addProduct(Product product);
+     boolean addProduct(String name, String description, double price, int quantity);
 }
