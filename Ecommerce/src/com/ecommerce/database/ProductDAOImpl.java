@@ -19,7 +19,7 @@ public class ProductDAOImpl implements ProductDAOInterface {
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 Product product = new Product();
-                product.setProductId(rs.getInt("prod_id"));
+                product.setProductId(rs.getInt("product_id"));
                 product.setName(rs.getString("name"));
                 product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getDouble("price"));
@@ -34,10 +34,6 @@ public class ProductDAOImpl implements ProductDAOInterface {
     }
 
 	@Override
-	public void addProduct(Product product) {
-		
-	}
-
 	public boolean addProduct(String name, String description, double price, int quantity) {
 	    try (Connection conn = DataBaseConnection.connect()) {
 	        String query = "INSERT INTO Products (name, description, price, quantity) VALUES (?, ?, ?, ?)";
@@ -53,5 +49,20 @@ public class ProductDAOImpl implements ProductDAOInterface {
 	        e.printStackTrace();
 	    }
 	    return false;
+	}
+
+	public int getProductQuantity(int productId) {
+	    try (Connection conn = DataBaseConnection.connect()) {
+	        String query = "SELECT quantity FROM Products WHERE product_id = ?";
+	        PreparedStatement stmt = conn.prepareStatement(query);
+	        stmt.setInt(1, productId);
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt("quantity");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return -1; // Indicates product not found
 	}
 }

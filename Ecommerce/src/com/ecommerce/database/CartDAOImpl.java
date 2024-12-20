@@ -15,7 +15,7 @@ public class CartDAOImpl implements CartDAOInterface {
     public boolean addToCart(int userId, int productId, int quantity) {
         try (Connection conn = DataBaseConnection.connect()) {
             // Check if product exists in the Products table
-            String checkProductQuery = "SELECT prod_id FROM Products WHERE prod_id = ?";
+            String checkProductQuery = "SELECT product_id FROM Products WHERE product_id = ?";
             PreparedStatement checkProductStmt = conn.prepareStatement(checkProductQuery);
             checkProductStmt.setInt(1, productId);
             ResultSet rs = checkProductStmt.executeQuery();
@@ -26,7 +26,7 @@ public class CartDAOImpl implements CartDAOInterface {
             }
 
             // Check stock availability in Products table
-            String stockQuery = "SELECT quantity FROM Products WHERE prod_id = ?";
+            String stockQuery = "SELECT quantity FROM Products WHERE product_id = ?";
             PreparedStatement stockStmt = conn.prepareStatement(stockQuery);
             stockStmt.setInt(1, productId);
             ResultSet stockRs = stockStmt.executeQuery();
@@ -65,7 +65,7 @@ public class CartDAOImpl implements CartDAOInterface {
                 }
 
                 // Update product stock
-                String updateStockQuery = "UPDATE Products SET quantity = quantity - ? WHERE prod_id = ?";
+                String updateStockQuery = "UPDATE Products SET quantity = quantity - ? WHERE product_id = ?";
                 PreparedStatement updateStockStmt = conn.prepareStatement(updateStockQuery);
                 updateStockStmt.setInt(1, quantity);
                 updateStockStmt.setInt(2, productId);
@@ -83,15 +83,54 @@ public class CartDAOImpl implements CartDAOInterface {
     }
 
 
- 
+    @Override
+    public List<Cart> getCartItems(int userId) {
+        List<Cart> cartItems = new ArrayList<>();
+        try (Connection conn = DataBaseConnection.connect()) {
+            String query = "SELECT * FROM Cart WHERE user_id = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
 
-	
+            while (rs.next()) {
+                Cart cart = new Cart();
+                cart.setCartId(rs.getInt("cart_id"));
+                cart.setUserId(rs.getInt("user_id"));
+                cart.setProductId(rs.getInt("prod_id"));
+                cart.setQuantity(rs.getInt("quantity"));
+                cartItems.add(cart);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cartItems;
+    }
+
+
+	public List<Cart> getPurchaseHistory(int userId) {
+    List<Cart> purchaseHistory = new ArrayList<>();
+    try (Connection conn = DataBaseConnection.connect()) {
+        String query = "SELECT prod_id, quantity FROM PurchaseHistory WHERE user_id = ?";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setInt(1, userId);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            Cart cart = new Cart();
+            cart.setProductId(rs.getInt("prod_id"));
+            cart.setQuantity(rs.getInt("quantity"));
+            purchaseHistory.add(cart);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return purchaseHistory;
+}
 
 
 	public double calculateUserBill(int userId) {
     double totalBill = 0.0;
     try (Connection conn = DataBaseConnection.connect()) {
-        String query = "SELECT c.prod_id, c.quantity, p.price FROM Cart c INNER JOIN Products p ON c.prod_id = p.prod_id WHERE c.user_id = ?";
+        String query = "SELECT c.prod_id, c.quantity, p.price FROM Cart c INNER JOIN Products p ON c.prod_id = p.product_id WHERE c.user_id = ?";
         PreparedStatement stmt = conn.prepareStatement(query);
         stmt.setInt(1, userId);
         ResultSet rs = stmt.executeQuery();
@@ -108,14 +147,4 @@ public class CartDAOImpl implements CartDAOInterface {
 }
 
 
-
-
-
-
-
-	@Override
-	public List<Cart> getCartItems(int userId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

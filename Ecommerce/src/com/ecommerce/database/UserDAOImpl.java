@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ecommerce.interfaces.UserDAOInterface;
 import com.ecommerce.model.User;
@@ -72,5 +74,28 @@ public class UserDAOImpl implements UserDAOInterface{
         }
         return userId;
     }
+
+	public List<User> getAllUsers() {
+    List<User> users = new ArrayList<>();
+    try (Connection conn = DataBaseConnection.connect()) {
+        String query = "SELECT * FROM UsersDetails";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            User user = new User();
+            user.setUserId(rs.getInt("user_id"));
+            user.setFirstName(rs.getString("first_name"));
+            user.setLastName(rs.getString("last_name"));
+            user.setEmail(rs.getString("email"));
+            user.setMobile(rs.getString("mobile"));
+            users.add(user);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return users;
+}
+
 
 }
