@@ -65,8 +65,7 @@ public class ECommerceApplication {
                     user.setCity(sc.nextLine());
                     user.setRole("user");
 
-                    userDAO.registerUser(user);
-                   /* System.out.println("User registered successfully!");*/
+                    userDAO.registerUser
                 } else if (choice == 3) {
                     // Login
                     System.out.println("Enter Username: ");
@@ -142,10 +141,38 @@ public class ECommerceApplication {
                     // Calculate and display the total bill before purchasing
                     PurchaseHistoryDAOImpl purchaseDAO = new PurchaseHistoryDAOImpl();
 
+
+
+                    if (cartDAO.addToCart(userId, productId, quantity)) {
+                        System.out.println("Product added to cart successfully!");
+                    } else {
+                        System.out.println("Failed to add product to cart.");
+                    }
+                } else if (choice == 3) {
+                    // View Cart
+                    List<Cart> cartItems = cartDAO.getCartItems(userId);
+                    if (cartItems.isEmpty()) {
+                        System.out.println("Your cart is empty.");
+                    } else {
+                        System.out.println("Your Cart Items:");
+                        for (Cart cart : cartItems) {
+                            System.out.println("Product ID: " + cart.getProductId() + ", Quantity: " + cart.getQuantity());
+                        }
+                    }
+                } else if (choice == 4) {
+                    // Calculate and display the total bill before purchasing
+                    PurchaseHistoryDAOImpl purchaseDAO = new PurchaseHistoryDAOImpl();
+
                     // Calculate total bill for the user
                     double totalBill = purchaseDAO.calculateTotalBill(userId);
 
                     // Display total bill amount
+                    System.out.println("User ID: " + userId);
+                    System.out.println("Total Bill Amount: " + totalBill);
+
+                    
+                	} else if (choice == 5) {
+
                     System.out.println("Total Bill Amount: " + totalBill);
 
                     // Proceed with the purchase if the user confirms
@@ -164,6 +191,7 @@ public class ECommerceApplication {
                     } else {
                         System.out.println("Purchase cancelled.");
                     }                } else if (choice == 5) {
+
                     // Logout
                     System.out.println("Logged out successfully.");
                     userId = -1;
@@ -199,6 +227,7 @@ public class ECommerceApplication {
                         System.out.println("Product added successfully!");
                     } else {
                         System.out.println("Failed to add product.");
+
                     }
                 } else if (choice == 2) {
                     // View Registered Users
@@ -224,6 +253,33 @@ public class ECommerceApplication {
                     } else {
                         System.out.println("Product not found.");
                     }
+
+                    }
+                } else if (choice == 2) {
+                    // View Registered Users
+                    List<User> users = userDAO.getAllUsers();
+                    if (users.isEmpty()) {
+                        System.out.println("No registered users found.");
+                    } else {
+                        System.out.println("Registered Users:");
+                        for (User user : users) {
+                            System.out.println("User ID: " + user.getUserId() +
+                                    ", Name: " + user.getFirstName() + " " + user.getLastName() +
+                                    ", Email: " + user.getEmail() +
+                                    ", Mobile: " + user.getMobile());
+                        }
+                    }
+                } else if (choice == 3) {
+                    // Check Product Quantity
+                    System.out.println("Enter Product ID to check quantity: ");
+                    int productId = sc.nextInt();
+                    int quantity = productDAO.getProductQuantity(productId);
+                    if (quantity >= 0) {
+                        System.out.println("Available quantity for Product ID " + productId + ": " + quantity);
+                    } else {
+                        System.out.println("Product not found.");
+                    }
+
                 } else if (choice == 4) {
                     // View User Purchase History
                     System.out.println("Enter User ID to view purchase history: ");

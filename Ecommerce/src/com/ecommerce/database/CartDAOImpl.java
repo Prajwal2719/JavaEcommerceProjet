@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.ecommerce.interfaces.CartDAOInterface;
 import com.ecommerce.model.Cart;
+import com.ecommerce.model.Product;
 
 public class CartDAOImpl implements CartDAOInterface {
 
@@ -130,7 +131,11 @@ public class CartDAOImpl implements CartDAOInterface {
 	public double calculateUserBill(int userId) {
     double totalBill = 0.0;
     try (Connection conn = DataBaseConnection.connect()) {
+
+        String query = "SELECT c.prod_id, c.quantity, p.price FROM Cart c INNER JOIN Products p ON c.prod_id = p.prod_id WHERE c.user_id = ?";
+
         String query = "SELECT c.prod_id, c.quantity, p.price FROM Cart c INNER JOIN Products p ON c.prod_id = p.product_id WHERE c.user_id = ?";
+
         PreparedStatement stmt = conn.prepareStatement(query);
         stmt.setInt(1, userId);
         ResultSet rs = stmt.executeQuery();
@@ -145,6 +150,14 @@ public class CartDAOImpl implements CartDAOInterface {
     }
     return totalBill;
 }
+
+
+
+	public Product getProductDetails(int productId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 
 }

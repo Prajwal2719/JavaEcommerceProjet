@@ -53,7 +53,11 @@ public class ProductDAOImpl implements ProductDAOInterface {
 
 	public int getProductQuantity(int productId) {
 	    try (Connection conn = DataBaseConnection.connect()) {
+
+	        String query = "SELECT quantity FROM Products WHERE prod_id = ?";
+
 	        String query = "SELECT quantity FROM Products WHERE product_id = ?";
+
 	        PreparedStatement stmt = conn.prepareStatement(query);
 	        stmt.setInt(1, productId);
 	        ResultSet rs = stmt.executeQuery();
