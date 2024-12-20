@@ -1,3 +1,4 @@
+
 package com.ecommerce.interfaces;
 
 public interface PurchaseHistoryDAOInterface {
@@ -5,3 +6,10 @@ public interface PurchaseHistoryDAOInterface {
 
 		double calculateTotalBill(int userId);
 }
+
+package com.ecommerce.interfaces;
+
+public interface PurchaseHistoryDAOInterface {
+	    boolean purchaseItems(int userId);
+}
+

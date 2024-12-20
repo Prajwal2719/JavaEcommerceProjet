@@ -16,7 +16,7 @@ public class CartDAOImpl implements CartDAOInterface {
     public boolean addToCart(int userId, int productId, int quantity) {
         try (Connection conn = DataBaseConnection.connect()) {
             // Check if product exists in the Products table
-            String checkProductQuery = "SELECT prod_id FROM Products WHERE prod_id = ?";
+            String checkProductQuery = "SELECT product_id FROM Products WHERE product_id = ?";
             PreparedStatement checkProductStmt = conn.prepareStatement(checkProductQuery);
             checkProductStmt.setInt(1, productId);
             ResultSet rs = checkProductStmt.executeQuery();
@@ -27,7 +27,7 @@ public class CartDAOImpl implements CartDAOInterface {
             }
 
             // Check stock availability in Products table
-            String stockQuery = "SELECT quantity FROM Products WHERE prod_id = ?";
+            String stockQuery = "SELECT quantity FROM Products WHERE product_id = ?";
             PreparedStatement stockStmt = conn.prepareStatement(stockQuery);
             stockStmt.setInt(1, productId);
             ResultSet stockRs = stockStmt.executeQuery();
@@ -66,7 +66,7 @@ public class CartDAOImpl implements CartDAOInterface {
                 }
 
                 // Update product stock
-                String updateStockQuery = "UPDATE Products SET quantity = quantity - ? WHERE prod_id = ?";
+                String updateStockQuery = "UPDATE Products SET quantity = quantity - ? WHERE product_id = ?";
                 PreparedStatement updateStockStmt = conn.prepareStatement(updateStockQuery);
                 updateStockStmt.setInt(1, quantity);
                 updateStockStmt.setInt(2, productId);
@@ -131,7 +131,11 @@ public class CartDAOImpl implements CartDAOInterface {
 	public double calculateUserBill(int userId) {
     double totalBill = 0.0;
     try (Connection conn = DataBaseConnection.connect()) {
+
         String query = "SELECT c.prod_id, c.quantity, p.price FROM Cart c INNER JOIN Products p ON c.prod_id = p.prod_id WHERE c.user_id = ?";
+
+        String query = "SELECT c.prod_id, c.quantity, p.price FROM Cart c INNER JOIN Products p ON c.prod_id = p.product_id WHERE c.user_id = ?";
+
         PreparedStatement stmt = conn.prepareStatement(query);
         stmt.setInt(1, userId);
         ResultSet rs = stmt.executeQuery();
@@ -148,10 +152,12 @@ public class CartDAOImpl implements CartDAOInterface {
 }
 
 
+
 	public Product getProductDetails(int productId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 
 }
